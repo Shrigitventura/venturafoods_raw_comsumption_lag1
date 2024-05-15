@@ -1540,8 +1540,8 @@ final_paper %>%
 
 colnames(final_paper)[1]	<-	"Year"
 colnames(final_paper)[2]	<-	"Month"
-colnames(final_paper)[3]	<-	"mfg ref"
-colnames(final_paper)[4]	<-	"mfg Location"
+colnames(final_paper)[3]	<-	"ref"
+colnames(final_paper)[4]	<-	"Location"
 colnames(final_paper)[5]	<-	"SKU (FG)"
 colnames(final_paper)[6]	<-	"Description"
 colnames(final_paper)[7]	<-	"Label"
@@ -1571,35 +1571,46 @@ colnames(final_paper)[30]	<-	"Diff (Forecasted - Original Sales Order) (Lag 1)"
 colnames(final_paper)[31]	<-	"DSX"
 
 
-# Export to Excel File ----
-# write_csv(final_paper, "C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 25/Raw consumption Lag 1/Monthly recurring reports/05.15.2024/raw consumption comparison.csv")
+final_paper %>% 
+  dplyr::filter(Location != "-1") -> final_paper
 
-################################################### Export to Excel File ###################################################
-# Assuming final_paper is your dataset and is already loaded in R
 
-chunk_size <- 1048575 # Define the number of rows per chunk for Excel
-num_files <- ceiling(nrow(final_paper) / chunk_size) # Calculate the number of files needed
 
-# Directory where you want to save the Excel files
-output_dir <- "C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 25/Raw consumption Lag 1/Monthly recurring reports/05.15.2024/"
-
-# Check if 'final_paper' is a data.frame and has rows
-if (is.data.frame(final_paper) && nrow(final_paper) > 0) {
-  
-  for (i in seq_len(num_files)) {
-    start_row <- ((i - 1) * chunk_size) + 1
-    end_row <- min(i * chunk_size, nrow(final_paper))
-    
-    # Construct the filename with full path for each chunk
-    filename <- sprintf("%sraw_consumption_comparison_chunk_%d.xlsx", output_dir, i)
-    data_chunk <- final_paper[start_row:end_row, ]
-    
-    # Use write_xlsx function from writexl package to save each chunk to a file
-    write_xlsx(data_chunk, filename)
+######################## Split the data frame in half #######################
+# Define the function to split the final_paper dataframe in half based on a given column's median value
+split_final_paper <- function(final_paper, column) {
+  if (!column %in% names(final_paper)) {
+    stop(paste("Column", column, "not found in the final_paper dataframe."))
   }
-  cat("Export completed: ", num_files, "files created in the directory.\n")
   
-} else {
-  cat("The 'final_paper' variable is either not a data.frame or it contains no rows.\n")
+  # Ensure that the column can be coerced to numeric
+  numeric_column <- as.numeric(final_paper[[column]])
+  # Handle NA values which might cause the median function to fail
+  if (any(is.na(numeric_column))) {
+    warning("NA values found in numeric_column. Excluding them from median calculation.")
+    numeric_column <- na.omit(numeric_column)
+  }
+  cutoff_value <- median(numeric_column)
+  
+  first_half <- final_paper %>%
+    filter(!!as.symbol(column) <= cutoff_value)
+  
+  second_half <- final_paper %>%
+    filter(!!as.symbol(column) > cutoff_value)
+  
+  return(list(first_half = first_half, second_half = second_half))
 }
+
+
+result <- split_final_paper(final_paper, 'Location')
+
+# The result will be a list containing first_half and second_half dataframes
+result$first_half -> final_paper_1
+result$second_half -> final_paper_2
+
+
+# Export to Excel File ----
+write_xlsx(final_paper_1, "C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 25/Raw consumption Lag 1/Monthly recurring reports/05.15.2024/raw consumption comparison_1.xlsx")
+write_xlsx(final_paper_2, "C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 25/Raw consumption Lag 1/Monthly recurring reports/05.15.2024/raw consumption comparison_2.xlsx")
+
 
