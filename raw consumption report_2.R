@@ -1536,6 +1536,11 @@ final_paper %>%
 final_paper %>% 
   dplyr::mutate(mfg_ref = gsub("_", "-", mfg_ref)) -> final_paper
 
+final_paper %>% 
+  dplyr::left_join(rm_to_sku %>% dplyr::select(component, comp_description) %>% dplyr::distinct(component, .keep_all = TRUE), by = "component") -> final_paper
+
+
+
 
 
 colnames(final_paper)[1]	<-	"Year"
@@ -1569,6 +1574,7 @@ colnames(final_paper)[28]	<-	"Diff (Forecasted - Actual Shipped) (Lag 1)"
 colnames(final_paper)[29]	<-	"Consumption % (by Adjusted forecast - Original Sales Order Qty) (Lag 1)"
 colnames(final_paper)[30]	<-	"Diff (Forecasted - Original Sales Order) (Lag 1)"
 colnames(final_paper)[31]	<-	"DSX"
+colnames(final_paper)[32]	<-	"Comp Description"
 
 
 final_paper %>% 
