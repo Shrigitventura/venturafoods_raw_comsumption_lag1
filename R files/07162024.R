@@ -1050,6 +1050,50 @@ sales_orders_pivot %>%
 sku_actual_pivot %>% 
   dplyr::select(date_ref, actual_shipped_cases) -> sku_actual_for_missing_sku
 
+# 
+# 
+# # missing sku final page
+# identitied_skus_not_existing %>% 
+#   data.frame() %>% 
+#   dplyr::rename(mfg_ref = ref) %>%
+#   dplyr::mutate(mfg_ref = gsub("-", "_", mfg_ref)) %>% 
+#   dplyr::relocate(date_ref, year, month, mfg_ref, mfg_loc, sku) %>% 
+#   dplyr::left_join(sales_orders_for_missing_sku) %>% 
+#   dplyr::rename(sku_description = x8) %>% 
+#   dplyr::mutate(label = stringr::str_sub(sku, 6, 9)) %>% 
+#   dplyr::left_join(completed_sku_list) %>% 
+#   dplyr::mutate(group_no = "n/a",
+#                 group = "n/a",
+#                 adjusted_forecast_cases_lag0 = 0,
+#                 forecasted_oil_qty_lag0 = 0,
+#                 consumption_percent_adjusted_actual_shipped_lag0 = "n/a",
+#                 diff_between_forecast_actual_lag0 = "n/a",
+#                 consumption_percent_adjusted_sales_order_lag0 = "n/a",
+#                 diff_between_forecast_original_lag0 = "n/a",
+#                 adjusted_forecast_cases_lag1 = 0,
+#                 forecasted_oil_qty_lag1 = 0,
+#                 consumption_percent_adjusted_actual_shipped_lag1 = "n/a",
+#                 diff_between_forecast_actual_lag1 = "n/a",
+#                 consumption_percent_adjusted_sales_order_lag1 = "n/a",
+#                 diff_between_forecast_original_lag1 = "n/a") %>% 
+#   dplyr::left_join(bom_2) %>% 
+#   dplyr::left_join(sku_actual_for_missing_sku) %>% 
+#   dplyr::mutate(consumption_qty_actual_shipped = actual_shipped_cases * quantity_w_scrap) %>% 
+#   dplyr::left_join(sales_orders_for_missing_sku_2) %>% 
+#   dplyr::mutate(consumption_qty_sales_order_qty = order_qty_final * quantity_w_scrap) %>% 
+#   dplyr::select(year, month, mfg_ref, mfg_loc, sku, sku_description, label, category, platform, group_no, group, component,
+#                 quantity_w_scrap, actual_shipped_cases, consumption_qty_actual_shipped, order_qty_final,
+#                 order_qty_original,	consumption_qty_sales_order_qty, 
+#                 
+#                 adjusted_forecast_cases_lag0, forecasted_oil_qty_lag0, consumption_percent_adjusted_actual_shipped_lag0, diff_between_forecast_actual_lag0, 
+#                 consumption_percent_adjusted_sales_order_lag0, diff_between_forecast_original_lag0, 
+#                 
+#                 adjusted_forecast_cases_lag1, forecasted_oil_qty_lag1, consumption_percent_adjusted_actual_shipped_lag1, diff_between_forecast_actual_lag1, 
+#                 consumption_percent_adjusted_sales_order_lag1, diff_between_forecast_original_lag1) %>% 
+#   
+#   dplyr::arrange(year, month, mfg_loc, sku) -> identitied_skus_not_existing_2
+# 
+# 
 
 
 #######################################################################################################################
@@ -1057,13 +1101,13 @@ sku_actual_pivot %>%
 #######################################################################################################################
 
 raw_comsumption_comparison_final %>% 
-  dplyr::mutate(dsx = "Y") -> raw_comsumption_comparison_final
+  dplyr::mutate(dsx = "Y") -> final_paper
 
 
-identitied_skus_not_existing_2 %>% 
-  dplyr::mutate(dsx = "N") -> identitied_skus_not_existing_2
+# identitied_skus_not_existing_2 %>% 
+#   dplyr::mutate(dsx = "N") -> identitied_skus_not_existing_2
 
-rbind(raw_comsumption_comparison_final, identitied_skus_not_existing_2) -> final_paper
+# rbind(raw_comsumption_comparison_final, identitied_skus_not_existing_2) -> final_paper
 
 
 
