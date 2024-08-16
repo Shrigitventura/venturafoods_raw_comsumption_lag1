@@ -13,41 +13,42 @@ library(lubridate)
 #########################################################################################################################
 
 
-current_date <- as.Date("2024-07-05")
+current_date <- as.Date("2024-08-15")
 
 ######################################################### DSX List ######################################################
 
-dsx_lag1 <- read_excel("S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/BI Forecast Backup/2023/DSX Forecast Backup - 2023.12.04.xlsx")
+dsx_lag1 <- read_excel("S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/BI Forecast Backup/2024/DSX Forecast Backup - 2024.01.02.xlsx")
 
-dsx_1 <- read_excel("S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/BI Forecast Backup/2024/DSX Forecast Backup - 2024.01.02.xlsx")
-dsx_2 <- read_excel("S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/BI Forecast Backup/2024/DSX Forecast Backup - 2024.02.01.xlsx")
-dsx_3 <- read_excel("S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/BI Forecast Backup/2024/DSX Forecast Backup - 2024.03.01.xlsx")
-dsx_4 <- read_excel("S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/BI Forecast Backup/2024/DSX Forecast Backup - 2024.04.01.xlsx")
-dsx_5 <- read_excel("S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/BI Forecast Backup/2024/DSX Forecast Backup - 2024.05.01.xlsx")
-dsx_6 <- read_excel("S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/BI Forecast Backup/2024/DSX Forecast Backup - 2024.06.03.xlsx")
+dsx_1 <- read_excel("S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/BI Forecast Backup/2024/DSX Forecast Backup - 2024.02.01.xlsx")
+dsx_2 <- read_excel("S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/BI Forecast Backup/2024/DSX Forecast Backup - 2024.03.01.xlsx")
+dsx_3 <- read_excel("S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/BI Forecast Backup/2024/DSX Forecast Backup - 2024.04.01.xlsx")
+dsx_4 <- read_excel("S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/BI Forecast Backup/2024/DSX Forecast Backup - 2024.05.01.xlsx")
+dsx_5 <- read_excel("S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/BI Forecast Backup/2024/DSX Forecast Backup - 2024.06.03.xlsx")
+dsx_6 <- read_excel("S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/BI Forecast Backup/2024/DSX Forecast Backup - 2024.07.01.xlsx")
 
 ######################################################### Other List ######################################################
 
 # BoM RM to sku 
-rm_to_sku <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/IQR Automation/RM/Weekly Report run/2024/07.02.2024/Raw Material Inventory Health (IQR) NEW TEMPLATE - 07.02.2024.xlsx", 
+rm_to_sku <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/IQR Automation/RM/Weekly Report run/2024/08.13.2024/Raw Material Inventory Health (IQR) NEW TEMPLATE - 08.13.2024.xlsx", 
                         sheet = "RM to SKU")
 
 # BoM Report 
-bom <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/IQR Automation/RM/Weekly Report run/2024/07.02.2024/Raw Material Inventory Health (IQR) NEW TEMPLATE - 07.02.2024.xlsx", 
-                  sheet = "BoM")
+bom <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/IQR Automation/RM/Weekly Report run/2024/08.13.2024/Raw Material Inventory Health (IQR) NEW TEMPLATE - 08.13.2024.xlsx", 
+                  sheet = "BoM",
+                  col_types = "text")
 
 
 ## sku_actual (Make sure in the MSTR if months info input correct) 
 # https://edgeanalytics.venturafoods.com/MicroStrategyLibrary/app/DF007F1C11E9B3099BB30080EF7513D2/7D421DDA4D4411DA73B4469771826BD9/W62--K46
-sku_actual <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Oil Consumption/12 month rolling report/2024.06 Lag4/shipped.xlsx")
+sku_actual <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 25/Raw consumption Lag 1/Monthly recurring reports/08.15.2024/shipped.xlsx")
 
 # Input sales orders (Make sure in the MSTR if months info input correct) 
 # https://edgeanalytics.venturafoods.com/MicroStrategyLibrary/app/DF007F1C11E9B3099BB30080EF7513D2/7D421DDA4D4411DA73B4469771826BD9/W62--K46
-sales_orders <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Oil Consumption/12 month rolling report/2024.06 Lag4/ordered.xlsx")
+sales_orders <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 25/Raw consumption Lag 1/Monthly recurring reports/08.15.2024/ordered.xlsx")
 
 
 # Completed SKU List 
-completed_sku_list <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2024/07.02.2024/Completed SKU list - Linda.xlsx")
+completed_sku_list <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2024/08.13.2024/Completed SKU list - Linda.xlsx")
 
 
 # SS Optimization by Location - Raw Material Live
@@ -55,7 +56,7 @@ ss_optimization_raw <- read_excel("S:/Supply Chain Projects/LOGISTICS/SCP/Cost S
                                   sheet = "Sheet1")
 
 # Exception Report
-exception_report <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2024/07.02.2024/exception report.xlsx")
+exception_report <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2024/08.13.2024/exception report.xlsx")
 
 # Supplier Address
 supplier_address <- read_excel("S:/Supply Chain Projects/Data Source (SCE)/Address Book/Address Book - 2024.08.05.xlsx",
@@ -415,7 +416,6 @@ forecast %>%
 
 bom %>% 
   janitor::clean_names() %>% 
-  readr::type_convert() %>% 
   data.frame() %>% 
   dplyr::mutate(ref = gsub("-", "_", ref)) %>% 
   dplyr::select(ref, comp_ref, business_unit, parent_item_number, comp_number_labor_code, quantity_w_scrap, um, commodity_class) %>% 
@@ -423,7 +423,8 @@ bom %>%
                 sku = parent_item_number,
                 component = comp_number_labor_code) %>% 
   dplyr::mutate(mfg_ref = paste0(mfg_loc, "_", sku),
-                mfg_comp_ref = paste0(mfg_loc, "_", component)) %>% 
+                mfg_comp_ref = paste0(mfg_loc, "_", component)) %>%
+  dplyr::mutate(quantity_w_scrap = as.double(quantity_w_scrap)) %>%
   dplyr::select(-mfg_loc) %>% 
   dplyr::relocate(ref, comp_ref, mfg_ref, mfg_comp_ref, sku, component, quantity_w_scrap) %>% 
   dplyr::mutate(quantity_w_scrap = round(quantity_w_scrap, 8)) -> bom
@@ -539,7 +540,7 @@ raw_comsumption_comparison %>%
 raw_comsumption_comparison_ver2 %>% 
   dplyr::mutate(qwc_ref = paste0(mfg_ref, "_", component)) %>% 
   dplyr::left_join(qwc_table, by = "qwc_ref") -> raw_comsumption_comparison_ver2
-  
+
 
 
 
@@ -1119,6 +1120,7 @@ final_paper %>%
   dplyr::mutate(mfg_ref = gsub("_", "-", mfg_ref)) -> final_paper
 
 final_paper %>% 
+  dplyr::mutate(component = as.double(component)) %>% 
   dplyr::left_join(rm_to_sku %>% dplyr::select(component, comp_description) %>% dplyr::distinct(component, .keep_all = TRUE), by = "component") -> final_paper
 
 
@@ -1154,7 +1156,9 @@ class_ref %>%
   dplyr::distinct(class_number, .keep_all = TRUE) -> class_ref_lookup
 
 final_paper %>% 
+  dplyr::mutate(component = as.character(component)) %>% 
   left_join(bom %>% select(component, commodity_class) %>% distinct(component, .keep_all = TRUE) %>% rename(class_number = commodity_class)) %>% 
+  dplyr::mutate(class_number = as.character(class_number)) %>%
   left_join(class_ref_lookup, by = "class_number") -> final_paper
 
 
@@ -1227,9 +1231,7 @@ final_paper %>%
 
 ##### Final Touch
 final_paper %>% 
-  dplyr::rename("Forecasted Component Qty (Lag 0)" = "forecasted_oil_qty_lag0",
-                "Forecasted Component Qty (Lag 1)" = "forecasted_oil_qty_lag1",
-                "Date" = 'date',
+  dplyr::rename(Date = date,
                 UoM = um) -> final_paper
 
 
@@ -1275,5 +1277,5 @@ colnames(final_paper)[32]	<-	"Comp Description"
 
 
 
-write_xlsx(final_paper, "C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 25/Raw consumption Lag 1/Monthly recurring reports/07.16.2024/raw consumption comparison_2.xlsx")
+write_xlsx(final_paper, "C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 25/Raw consumption Lag 1/Monthly recurring reports/08.15.2024/raw consumption comparison.xlsx")
 
