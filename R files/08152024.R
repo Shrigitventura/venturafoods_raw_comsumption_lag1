@@ -1291,6 +1291,10 @@ final_paper %>%
   dplyr::left_join(item_type, by = "component") -> final_paper
 
 
+final_paper %>% 
+  dplyr::mutate(item_type = ifelse(is.na(item_type), "NA", item_type),
+                product_status = ifelse(is.na(product_status), "NA", product_status)) -> final_paper
+
 
 
 ###########################################################################################################################################
