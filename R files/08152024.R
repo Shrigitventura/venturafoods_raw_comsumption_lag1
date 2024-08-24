@@ -36,7 +36,7 @@ rm_to_sku <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE
                         sheet = "RM to SKU")
 
 # BoM Report 
-bom <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/IQR Automation/RM/Weekly Report run/2024/08.13.2024/Raw Material Inventory Health (IQR) NEW TEMPLATE - 08.13.2024.xlsx", 
+bom_raw <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/IQR Automation/RM/Weekly Report run/2024/08.13.2024/Raw Material Inventory Health (IQR) NEW TEMPLATE - 08.13.2024.xlsx", 
                   sheet = "BoM",
                   col_types = "text")
 
@@ -415,7 +415,7 @@ forecast %>%
 # bom <- read_excel("S:/Supply Chain Projects/LOGISTICS/SCP/Cost Saving Reporting/Inventory Days On Hand/Raw Material Inventory Health (IQR) - 03.29.23.xlsx", 
 #                   sheet = "BoM")
 
-bom %>% 
+bom_raw %>% 
   janitor::clean_names() %>% 
   data.frame() %>% 
   dplyr::mutate(ref = gsub("-", "_", ref)) %>% 
@@ -1165,50 +1165,31 @@ final_paper %>%
   left_join(class_ref_lookup, by = "class_number") -> final_paper
 
 
+final_paper %>% 
+  dplyr::filter(!is.na(component)) -> final_paper
 
 
 
 
 ### Supplier #
-exception_report[-1:-2,] -> exception_report
-colnames(exception_report) <- exception_report[1, ]
-exception_report[-1, ] -> exception_report
+bom_raw %>% 
+  janitor::clean_names() %>% 
+  data.frame() %>% 
+  dplyr::select(comp_ref, supplier_number, supplier_name) %>%
+  dplyr::mutate(comp_ref = gsub("-", "_", comp_ref)) %>% 
+  dplyr::distinct(comp_ref, .keep_all = TRUE) -> supplier_no_name
 
 
-exception_report %>% 
-  janitor::clean_names() %>%
-  dplyr::mutate(supplier = replace(supplier, is.na(supplier), 0)) %>% 
-  dplyr::mutate(ref_component = paste0(b_p, "_", item_number)) %>% 
-  dplyr::select(ref_component, supplier) %>% 
-  dplyr::distinct(ref_component, .keep_all = TRUE) -> exception_report_supplier_no
 
 
 final_paper %>% 
-  dplyr::mutate(ref_component = paste0(mfg_loc, "_", component)) %>% 
+  dplyr::mutate(comp_ref = paste0(mfg_loc, "_", component)) %>% 
   dplyr::left_join(
-    exception_report_supplier_no %>% group_by(ref_component) %>% slice(1) %>% ungroup(), 
-    by = "ref_component") %>% 
-  dplyr::select(-ref_component) %>% 
-  dplyr::mutate(supplier = replace(supplier, is.na(supplier), 0)) -> final_paper
-
-
-
-### Supplier Name
-supplier_address %>% 
-  janitor::clean_names() %>% 
-  dplyr::select(1, 2) %>% 
-  dplyr::rename(supplier_number = address_number,
-                supplier_name = alpha_name) %>% 
-  dplyr::mutate(supplier_number = as.character(supplier_number)) %>% 
-  dplyr::rename(supplier = supplier_number) -> supplier_name
-
-
-final_paper %>%
-  left_join(
-    supplier_name %>% group_by(supplier) %>% slice(1) %>% ungroup(),
-    by = "supplier") %>% 
-  dplyr::mutate(supplier_name = replace(supplier_name, is.na(supplier_name), 0)) -> final_paper
-
+    supplier_no_name %>% group_by(comp_ref) %>% slice(1) %>% ungroup(), 
+    by = "comp_ref") %>% 
+  dplyr::select(-comp_ref) %>% 
+  dplyr::mutate(supplier_number = replace(supplier_number, is.na(supplier_number), 0)) %>% 
+  dplyr::rename(supplier = supplier_number) -> final_paper
 
 
 ### UoM
@@ -1218,83 +1199,24 @@ final_paper %>%
 
 
 
-#### Add Item Type
-
-ssc %>% 
-  janitor::clean_names() %>% 
-  dplyr::select(item, category) %>% 
-  dplyr::mutate(item = as.double(item)) %>% 
-  dplyr::filter(!is.na(item)) %>% 
-  dplyr::distinct(item, .keep_all = TRUE) %>% 
-  dplyr::mutate(item = as.character(item)) %>% 
-  dplyr::mutate(category = tolower(category)) %>% 
-  dplyr::rename(item_type = category) -> ssc_item_type
-
-
-
-final_paper %>% 
-  dplyr::left_join(ssc_item_type, by = c("component" = "item")) -> final_paper
-
-
-
-###### 8/22/2024 ######
-final_paper %>% 
-  dplyr::filter(!is.na(component)) -> final_paper
-
-
-
-
-
-## DNRR items? ##
-ss_optimization_raw[-1:-5, ] -> ss_optimization
-colnames(ss_optimization) <- ss_optimization[1, ]
-ss_optimization %>% 
-  janitor::clean_names() -> ss_optimization
-ss_optimization[-1, ] -> ss_optimization
-
-
-ss_optimization %>% 
-  dplyr::select(item, product_status) %>% 
-  dplyr::distinct(item, .keep_all = TRUE) %>% 
-  dplyr::rename(component = item) %>% 
-  dplyr::mutate(component = as.double(component)) %>% 
-  dplyr::filter(!is.na(component)) %>% 
-  dplyr::mutate(component = as.character(component)) -> active_items
-
-final_paper %>%
-  dplyr::left_join(active_items, by = "component") %>% 
-  dplyr::mutate(supplier = ifelse(supplier == 0 & product_status == "ACTIVE", "0", 
-                                  ifelse(supplier == 0 & product_status == "INACTIVE", "DNRR", supplier))) %>% 
-  dplyr::mutate(supplier_name = ifelse(supplier == "0", "0",
-                                       ifelse(supplier == "DNRR", "DNRR", supplier_name))) -> final_paper
-
-
-
+# #### Add Item Type   
+class_ref_lookup %>%
+  mutate(
+    item_type = case_when(
+      as.numeric(class_number) < 500 ~ "non-commodity",
+      class_number == "570" ~ "Label",
+      as.numeric(class_number) >= 500 & as.numeric(class_number) < 900 & class_number != "570" ~ "packaging",
+      as.numeric(class_number) > 900 ~ "commodity oil",
+      class_number %in% c("BCH", "BLD", "FGT", "RPS", "SFM", "SSA", "WIP") ~ "WIP",
+      class_number == "OHD" ~ "overhead",
+      TRUE ~ NA_character_
+    )
+  ) %>% 
+  mutate(item_type = ifelse(is.na(item_type), "NA", item_type)) -> class_ref_lookup_table
+  
 
 final_paper %>% 
-  dplyr::mutate(supplier = ifelse(is.na(supplier), "0", supplier),
-                supplier_name = ifelse(is.na(supplier_name), "0", supplier_name)) -> final_paper
-
-
-## item type ##
-ss_optimization %>% 
-  dplyr::select(item, item_type) %>% 
-  dplyr::distinct(item, .keep_all = TRUE) %>% 
-  dplyr::rename(component = item) %>% 
-  dplyr::mutate(component = as.double(component)) %>% 
-  dplyr::filter(!is.na(component)) %>% 
-  dplyr::mutate(component = as.character(component)) -> item_type
-
-
-final_paper %>%
-  dplyr::select(-item_type) %>% 
-  dplyr::left_join(item_type, by = "component") -> final_paper
-
-
-final_paper %>% 
-  dplyr::mutate(item_type = ifelse(is.na(item_type), "NA", item_type),
-                product_status = ifelse(is.na(product_status), "NA", product_status)) -> final_paper
-
+  dplyr::left_join(class_ref_lookup_table, by = "class_number") -> final_paper
 
 
 ###########################################################################################################################################
@@ -1364,4 +1286,5 @@ colnames(final_paper)[32]	<-	"Comp Description"
 
 
 write_xlsx(final_paper, "C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 25/Raw consumption Lag 1/Monthly recurring reports/08.15.2024/raw consumption comparison.xlsx")
+
 

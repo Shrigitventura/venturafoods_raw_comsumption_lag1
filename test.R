@@ -1364,4 +1364,3 @@ colnames(final_paper)[32]	<-	"Comp Description"
 
 
 write_xlsx(final_paper, "C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 25/Raw consumption Lag 1/Monthly recurring reports/08.15.2024/raw consumption comparison.xlsx")
-
