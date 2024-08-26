@@ -1121,10 +1121,12 @@ final_paper %>%
   dplyr::mutate(mfg_ref = gsub("_", "-", mfg_ref)) -> final_paper
 
 final_paper %>% 
-  dplyr::mutate(comp_ref = paste0(mfg_loc, "_", component)) %>% 
+  dplyr::mutate(comp_sku_ref = paste0(mfg_loc, "_", component, "_", sku)) %>% 
   dplyr::select(-component) %>% 
-  dplyr::left_join(rm_to_sku %>% dplyr::select(comp_ref, component, comp_description) %>% dplyr::distinct(comp_ref, .keep_all = TRUE), by = "comp_ref") %>% 
-  dplyr::select(-comp_ref) -> final_paper
+  dplyr::left_join(rm_to_sku %>% 
+                     dplyr::mutate(comp_sku_ref = paste0(comp_ref, "_", sku)) %>% 
+                     dplyr::select(comp_sku_ref, component, comp_description) %>% dplyr::distinct(comp_sku_ref, .keep_all = TRUE), by = "comp_sku_ref") %>% 
+  dplyr::select(-comp_sku_ref) -> final_paper
 
 
 
@@ -1207,7 +1209,7 @@ class_ref_lookup %>%
       class_number == "570" ~ "Label",
       as.numeric(class_number) >= 500 & as.numeric(class_number) < 900 & class_number != "570" ~ "packaging",
       as.numeric(class_number) > 900 ~ "commodity oil",
-      class_number %in% c("BCH", "BLD", "FGT", "RPS", "SFM", "SSA", "WIP") ~ "WIP",
+      class_number %in% c("BCH", "BLD", "FGT", "RPS", "SFM", "SSA", "WIP", "S09", "S08", "S04", "S01", "S02", "S03", "S06", "S05", "S10", "S07") ~ "WIP",
       class_number == "OHD" ~ "overhead",
       TRUE ~ NA_character_
     )
@@ -1216,6 +1218,7 @@ class_ref_lookup %>%
   
 
 final_paper %>% 
+  dplyr::select(-class_description) %>% 
   dplyr::left_join(class_ref_lookup_table, by = "class_number") -> final_paper
 
 
@@ -1240,8 +1243,9 @@ final_paper %>%
                 UoM = um) -> final_paper
 
 
-final_paper %>% 
-  dplyr::relocate(component, .after = "group") -> final_paper
+final_paper %>%
+  dplyr::relocate(component, .after = "group") %>%
+  dplyr::relocate(class_description, item_type, .after = "class_number") -> final_paper
 
 
 
