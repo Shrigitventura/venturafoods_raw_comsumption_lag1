@@ -1249,7 +1249,7 @@ final_paper %>%
 
 ## Final touch on Supplier
 final_paper %>%
-  dplyr::mutate(supplier = ifelse(item_type == "commodity oil" | item_type == "WIP", "NA", supplier)) %>%
+  dplyr::mutate(supplier = ifelse(item_type == "commodity oil" | item_type == "WIP" | item_type == "overhead", "NA", supplier)) %>%
   dplyr::mutate(supplier_name = ifelse(supplier == "DNRR", "DNRR", 
                                        ifelse(supplier == "NA", "NA", supplier_name))) -> final_paper
 
