@@ -1254,6 +1254,10 @@ final_paper %>%
                                        ifelse(supplier == "NA", "NA", supplier_name))) -> final_paper
 
 
+final_paper %>% 
+  dplyr::mutate(supplier = ifelse(is.na(supplier), "NA", supplier)) %>%
+  dplyr::mutate(supplier_name = ifelse(is.na(supplier_name), "NA", supplier_name)) -> final_paper
+
 
 ###########################################################################################################################################
 ###########################################################################################################################################
