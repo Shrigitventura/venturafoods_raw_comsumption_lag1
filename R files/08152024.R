@@ -1194,6 +1194,31 @@ final_paper %>%
   dplyr::rename(supplier = supplier_number) -> final_paper
 
 
+exception_report[-1:-2, ] -> exception_report_supplier
+colnames(exception_report_supplier) <- exception_report_supplier[1, ]
+exception_report_supplier <- exception_report_supplier[-1, ]
+
+exception_report_supplier %>% 
+  janitor::clean_names() %>% 
+  dplyr::select(b_p, item_number) %>% 
+  dplyr::distinct() %>% 
+  dplyr::mutate(supplier_ref = paste0(b_p, "_", item_number),
+                dnrr = "N") %>% 
+  dplyr::select(supplier_ref, dnrr) -> exception_report_supplier
+
+final_paper %>% 
+  dplyr::mutate(supplier_ref = paste0(mfg_loc, "_", component)) %>% 
+  dplyr::left_join(exception_report_supplier, by = "supplier_ref") %>%
+  dplyr::mutate(dnrr = ifelse(is.na(dnrr), "Y", dnrr)) %>%
+  dplyr::mutate(supplier = ifelse(supplier == "NA" & dnrr == "Y", "DNRR", 
+                                  ifelse(supplier == "NA" & dnrr == "N", "NA", supplier))) %>% 
+  dplyr::mutate(supplier_name = ifelse(supplier == "DNRR", "DNRR", 
+                                       ifelse(supplier == "NA", "NA", supplier_name))) %>% 
+  dplyr::select(-supplier_ref, -dnrr) -> final_paper
+
+
+
+
 ### UoM
 final_paper %>% 
   dplyr::left_join(
