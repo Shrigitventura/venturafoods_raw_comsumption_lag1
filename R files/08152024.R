@@ -1167,6 +1167,8 @@ final_paper %>%
   left_join(class_ref_lookup, by = "class_number") -> final_paper
 
 
+# removing NA component
+
 final_paper %>% 
   dplyr::filter(!is.na(component)) -> final_paper
 
