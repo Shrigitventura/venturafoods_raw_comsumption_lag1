@@ -28,9 +28,6 @@ dsx_6 <- read_excel("S:/Global Shared Folders/Large Documents/S&OP/Demand Planni
 
 ######################################################### Other List ######################################################
 
-# Safety Stock Compliance report for Item Type
-ssc <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2024/12.31.2024/SS Metrics 1231.xlsx")
-
 # BoM RM to sku 
 rm_to_sku <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/IQR Automation/RM/Weekly Report run/2024/12.31.2024/Raw Material Inventory Health (IQR) NEW TEMPLATE - 12.31.2024.xlsx", 
                         sheet = "RM to SKU")
@@ -54,16 +51,11 @@ sales_orders <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/
 completed_sku_list <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2024/12.31.2024/Complete SKU list - Linda.xlsx")
 
 
-# SS Optimization by Location - Raw Material Live
-ss_optimization_raw <- read_excel("S:/Supply Chain Projects/LOGISTICS/SCP/Cost Saving Reporting/SS Optimization by Location - Raw Material LIVE.xlsx",
-                                  sheet = "Sheet1")
+
 
 # Exception Report
 exception_report <- read_excel("S:/Supply Chain Projects/Data Source (SCE)/JDE Exception report extract/2024/exception report 2024.12.31.xlsx")
 
-# Supplier Address
-supplier_address <- read_excel("S:/Supply Chain Projects/Data Source (SCE)/Address Book/Address Book - 2024.12.02.xlsx",
-                               sheet = "supplier")
 
 # Class reference 
 class_ref <- read_excel("S:/Supply Chain Projects/Data Source (SCE)/Class reference (JDE).xlsx")
