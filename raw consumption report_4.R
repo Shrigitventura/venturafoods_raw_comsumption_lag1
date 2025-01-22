@@ -13,48 +13,48 @@ library(lubridate)
 #########################################################################################################################
 
 
-current_date <- as.Date("2025-01-07")
+current_date <- as.Date("2025-01-21")
 
 ######################################################### DSX List ######################################################
 
-dsx_lag1 <- read_excel("S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/BI Forecast Backup/2024/DSX Forecast Backup - 2024.06.03.xlsx")
+dsx_lag1 <- read_excel("S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/BI Forecast Backup/2024/DSX Forecast Backup - 2024.07.03.xlsx")
 
-dsx_1 <- read_excel("S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/BI Forecast Backup/2024/DSX Forecast Backup - 2024.07.03.xlsx")
-dsx_2 <- read_excel("S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/BI Forecast Backup/2024/DSX Forecast Backup - 2024.08.02.xlsx")
-dsx_3 <- read_excel("S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/BI Forecast Backup/2024/DSX Forecast Backup - 2024.09.03.xlsx")
-dsx_4 <- read_excel("S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/BI Forecast Backup/2024/DSX Forecast Backup - 2024.10.01.xlsx")
-dsx_5 <- read_excel("S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/BI Forecast Backup/2024/DSX Forecast Backup - 2024.11.01.xlsx")
-dsx_6 <- read_excel("S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/BI Forecast Backup/2024/DSX Forecast Backup - 2024.12.02.xlsx")
+dsx_1 <- read_excel("S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/BI Forecast Backup/2024/DSX Forecast Backup - 2024.08.02.xlsx")
+dsx_2 <- read_excel("S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/BI Forecast Backup/2024/DSX Forecast Backup - 2024.09.03.xlsx")
+dsx_3 <- read_excel("S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/BI Forecast Backup/2024/DSX Forecast Backup - 2024.10.01.xlsx")
+dsx_4 <- read_excel("S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/BI Forecast Backup/2024/DSX Forecast Backup - 2024.11.01.xlsx")
+dsx_5 <- read_excel("S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/BI Forecast Backup/2024/DSX Forecast Backup - 2024.12.02.xlsx")
+dsx_6 <- read_excel("S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/BI Forecast Backup/2025/DSX Forecast Backup - 2025.01.02.xlsx")
 
 ######################################################### Other List ######################################################
 
 # BoM RM to sku 
-rm_to_sku <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/IQR Automation/RM/Weekly Report run/2024/12.31.2024/Raw Material Inventory Health (IQR) NEW TEMPLATE - 12.31.2024.xlsx", 
+rm_to_sku <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/IQR Automation/RM/Weekly Report run/2025/01.14.2025/Raw Material Inventory Health (IQR) NEW TEMPLATE - 01.14.2025.xlsx", 
                         sheet = "RM to SKU")
 
 # BoM Report 
-bom_raw <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/IQR Automation/RM/Weekly Report run/2024/12.31.2024/Raw Material Inventory Health (IQR) NEW TEMPLATE - 12.31.2024.xlsx", 
+bom_raw <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/IQR Automation/RM/Weekly Report run/2025/01.14.2025/Raw Material Inventory Health (IQR) NEW TEMPLATE - 01.14.2025.xlsx", 
                       sheet = "BoM",
                       col_types = "text")
 
 
 ## sku_actual (Make sure in the MSTR if months info input correct) 
 # https://edgeanalytics.venturafoods.com/MicroStrategyLibrary/app/DF007F1C11E9B3099BB30080EF7513D2/7D421DDA4D4411DA73B4469771826BD9/W62--K46
-sku_actual <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Oil Consumption/12 month rolling report/2024.12 Lag4/shipped.xlsx")
+sku_actual <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Oil Consumption/12 month rolling report/2025.01 Lag4/shipped.xlsx")
 
 # Input sales orders (Make sure in the MSTR if months info input correct) 
 # https://edgeanalytics.venturafoods.com/MicroStrategyLibrary/app/DF007F1C11E9B3099BB30080EF7513D2/7D421DDA4D4411DA73B4469771826BD9/W62--K46
-sales_orders <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Oil Consumption/12 month rolling report/2024.12 Lag4/ordered.xlsx")
+sales_orders <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Oil Consumption/12 month rolling report/2025.01 Lag4/ordered.xlsx")
 
 
 # Completed SKU List 
-completed_sku_list <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2024/12.31.2024/Complete SKU list - Linda.xlsx")
+completed_sku_list <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2025/01.14.2025/Complete SKU list - Linda.xlsx")
 
 
 
 
 # Exception Report
-exception_report <- read_excel("S:/Supply Chain Projects/Data Source (SCE)/JDE Exception report extract/2024/exception report 2024.12.31.xlsx")
+exception_report <- read_excel("S:/Supply Chain Projects/Data Source (SCE)/JDE Exception report extract/2025/exception report 2025.01.14.xlsx")
 
 
 # Class reference 
@@ -1326,6 +1326,6 @@ colnames(final_paper)[32]	<-	"Comp Description"
 
 
 
-write_xlsx(final_paper, "C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 25/Raw consumption Lag 1/Monthly recurring reports/01.07.2025/raw consumption comparison.xlsx")
+write_xlsx(final_paper, "C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 25/Raw consumption Lag 1/Monthly recurring reports/01.21.2025/raw consumption comparison.xlsx")
 
 
